@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -8,7 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="mobile-web-app-capable" content="yes">
     
-    <link rel="manifest" href="manifest.json" />
+    <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2583/2583344.png" />
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2583/2583344.png" />
     
@@ -87,19 +88,21 @@
     </style>
     
     <script type="importmap">
-    {
-      "imports": {
-        "react/": "https://esm.sh/react@^19.2.4/",
-        "react": "https://esm.sh/react@^19.2.4",
-        "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
-        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-        "lucide-react": "https://esm.sh/lucide-react@^0.564.0"
-      }
-    }
-    </script>
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
+    "vite": "https://esm.sh/vite@^7.3.1"
+  }
+}
+</script>
   </head>
   <body class="bg-slate-900 text-white transition-colors duration-300">
     <div id="root"></div>
-    <script type="module" src="index.tsx"></script>
+    <!-- No build do Vite, este caminho é automaticamente substituído pelo bundle JS -->
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
