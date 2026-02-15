@@ -102,7 +102,6 @@ const App: React.FC = () => {
   const sendPushNotification = useCallback((quote: Quote) => {
     if ('serviceWorker' in navigator && Notification.permission === 'granted') {
       navigator.serviceWorker.ready.then((registration) => {
-        // Fix: Cast the options object to any to avoid TypeScript error regarding 'renotify' property which is valid in browsers but may be missing from types.
         registration.showNotification('Inspire+: Destaque de Hoje', {
           body: `"${quote.text}" — ${quote.author}`,
           icon: 'https://cdn-icons-png.flaticon.com/512/2583/2583344.png',
@@ -115,23 +114,28 @@ const App: React.FC = () => {
   }, []);
 
   const rotateDailyQuote = useCallback(async (force = false) => {
-    const ROTATION_INTERVAL = 8 * 60 * 60 * 1000; // 8 horas
-    const now = Date.now();
-    const lastUpdate = parseInt(localStorage.getItem('last-quote-update') || '0');
-    const savedQuote = localStorage.getItem('daily-quote-data');
+    try {
+      const ROTATION_INTERVAL = 8 * 60 * 60 * 1000; // 8 horas
+      const now = Date.now();
+      const lastUpdate = parseInt(localStorage.getItem('last-quote-update') || '0');
+      const savedQuote = localStorage.getItem('daily-quote-data');
 
-    if (force || now - lastUpdate > ROTATION_INTERVAL || !savedQuote) {
-      const q = await getDailyQuote();
-      setDailyQuote(q);
-      localStorage.setItem('daily-quote-data', JSON.stringify(q));
-      localStorage.setItem('last-quote-update', now.toString());
-      
-      // Envia notificação se permitido
-      if (Notification.permission === 'granted') {
-        sendPushNotification(q);
+      if (force || now - lastUpdate > ROTATION_INTERVAL || !savedQuote) {
+        const q = await getDailyQuote();
+        setDailyQuote(q);
+        localStorage.setItem('daily-quote-data', JSON.stringify(q));
+        localStorage.setItem('last-quote-update', now.toString());
+        
+        if (Notification.permission === 'granted') {
+          sendPushNotification(q);
+        }
+      } else {
+        setDailyQuote(JSON.parse(savedQuote));
       }
-    } else {
-      setDailyQuote(JSON.parse(savedQuote));
+    } catch (err) {
+      console.error("Falha ao rotacionar frase:", err);
+      // Fallback para uma frase de constante se falhar completamente
+      setDailyQuote(INITIAL_QUOTES[0]);
     }
   }, [sendPushNotification]);
 
@@ -142,16 +146,23 @@ const App: React.FC = () => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') setDarkMode(false);
     
-    setNotificationsEnabled(Notification.permission === 'granted');
+    if (typeof Notification !== 'undefined') {
+      setNotificationsEnabled(Notification.permission === 'granted');
+    }
 
     const initialize = async () => {
-      await rotateDailyQuote();
-      setTimeout(() => setIsInitializing(false), 2000);
+      try {
+        await rotateDailyQuote();
+      } catch (e) {
+        console.error("Erro na inicialização:", e);
+      } finally {
+        // Garantir que a tela azul suma mesmo se houver erro
+        setTimeout(() => setIsInitializing(false), 2000);
+      }
     };
     initialize();
 
-    // Check periodically for rotation (if app left open)
-    const interval = setInterval(rotateDailyQuote, 60000 * 5); // Check every 5 mins
+    const interval = setInterval(rotateDailyQuote, 60000 * 5);
     return () => clearInterval(interval);
   }, [rotateDailyQuote]);
 
@@ -172,13 +183,14 @@ const App: React.FC = () => {
 
   const toggleNotifications = async () => {
     if (notificationsEnabled) {
-      // Browser doesn't allow revoking via JS easily, so we just update state
       setNotificationsEnabled(false);
     } else {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        setNotificationsEnabled(true);
-        if (dailyQuote) sendPushNotification(dailyQuote);
+      if (typeof Notification !== 'undefined') {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          setNotificationsEnabled(true);
+          if (dailyQuote) sendPushNotification(dailyQuote);
+        }
       }
     }
   };
@@ -430,11 +442,6 @@ const App: React.FC = () => {
           O Inspire+ é o seu companheiro diário projetado para potencializar o desenvolvimento pessoal e profissional.
         </p>
       </div>
-      <div className={`p-10 rounded-[2.5rem] border space-y-8 ${darkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-slate-200 shadow-sm'}`}>
-        <p className="text-lg leading-relaxed opacity-80">
-          Nossa missão é fornecer doses diárias de motivação e sabedoria, ajudando você a manter o foco, a resiliência e a clareza mental necessários para alcançar seus objetivos mais ambiciosos. 
-        </p>
-      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <FeatureBox icon={<Target className="text-indigo-500" />} title="Propósito" content="Foco total nos seus objetivos de vida." darkMode={darkMode} />
         <FeatureBox icon={<Award className="text-indigo-500" />} title="Excelência" content="Curadoria de alto nível e qualidade." darkMode={darkMode} />
@@ -461,10 +468,6 @@ const App: React.FC = () => {
             <h3 className="text-2xl font-black flex items-center gap-3"><Scale size={24} className="text-indigo-500" /> 1. Licença de Uso</h3>
             <p className="opacity-70 text-lg">Ao utilizar o Inspire+, você recebe uma licença pessoal apenas para fins de inspiração.</p>
           </section>
-          <section className="space-y-4">
-            <h3 className="text-2xl font-black flex items-center gap-3"><Lock size={24} className="text-indigo-500" /> 2. Propriedade Intelectual</h3>
-            <p className="opacity-70 text-lg">Todos os direitos autorais relacionados ao Inspire+ são de propriedade exclusiva da Inspire+ Digital Solutions.</p>
-          </section>
         </div>
       </div>
       <div className="text-center pt-8 border-t border-slate-700/50">
@@ -486,18 +489,6 @@ const App: React.FC = () => {
         <div className="space-y-6">
           <h3 className="text-3xl font-black flex items-center gap-4"><EyeOff className="text-emerald-500" /> Coleta Zero</h3>
           <p className="opacity-70 leading-relaxed text-xl">O Inspire+ não solicita e-mail ou dados pessoais. Você é anônimo.</p>
-        </div>
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className={`p-8 rounded-[2.5rem] ${darkMode ? 'bg-slate-900/40' : 'bg-slate-50'}`}>
-            <div className="text-indigo-500 mb-4"><Database size={28} /></div>
-            <h4 className="font-black text-xl mb-3">Local Storage</h4>
-            <p className="text-sm opacity-60">Seus favoritos nunca saem do seu dispositivo.</p>
-          </div>
-          <div className={`p-8 rounded-[2.5rem] ${darkMode ? 'bg-slate-900/40' : 'bg-slate-50'}`}>
-            <div className="text-indigo-500 mb-4"><Cpu size={28} /></div>
-            <h4 className="font-black text-xl mb-3">IA Anônima</h4>
-            <p className="text-sm opacity-60">As solicitações para o Gemini não contêm metadados seus.</p>
-          </div>
         </div>
       </div>
       <div className="text-center pt-8 border-t border-slate-700/50">
