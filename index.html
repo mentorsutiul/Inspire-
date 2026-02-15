@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -98,19 +97,9 @@
       }
     }
     </script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('service-worker.js', { scope: './' })
-            .then(reg => console.log('Service Worker registrado com sucesso:', reg.scope))
-            .catch(err => console.warn('Falha ao registrar Service Worker (comum em previews):', err));
-        });
-      }
-    </script>
   </head>
   <body class="bg-slate-900 text-white transition-colors duration-300">
     <div id="root"></div>
-    <!-- Script de entrada principal -->
     <script type="module" src="index.tsx"></script>
   </body>
 </html>

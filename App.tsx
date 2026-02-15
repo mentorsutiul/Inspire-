@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Home, 
@@ -16,7 +15,6 @@ import {
   Share2,
   Mail,
   ExternalLink,
-  Bell,
   Zap,
   Target,
   Award,
@@ -24,9 +22,7 @@ import {
   Scale,
   Lock,
   Cpu,
-  EyeOff,
-  Database,
-  CheckCircle2
+  EyeOff
 } from 'lucide-react';
 import { View, Category, Quote } from './types';
 import { CATEGORIES, INITIAL_QUOTES } from './constants';
@@ -95,27 +91,12 @@ const App: React.FC = () => {
   const [quotes] = useState<Quote[]>(INITIAL_QUOTES);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [darkMode, setDarkMode] = useState(true);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [dailyQuote, setDailyQuote] = useState<Quote | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const sendPushNotification = useCallback((quote: Quote) => {
-    if ('serviceWorker' in navigator && Notification.permission === 'granted') {
-      navigator.serviceWorker.ready.then((registration) => {
-        registration.showNotification('Inspire+: Destaque de Hoje', {
-          body: `"${quote.text}" — ${quote.author}`,
-          icon: 'https://cdn-icons-png.flaticon.com/512/2583/2583344.png',
-          badge: 'https://cdn-icons-png.flaticon.com/512/2583/2583344.png',
-          tag: 'daily-quote',
-          renotify: true
-        } as any);
-      });
-    }
-  }, []);
-
   const rotateDailyQuote = useCallback(async (force = false) => {
     try {
-      const ROTATION_INTERVAL = 8 * 60 * 60 * 1000; // 8 horas
+      const ROTATION_INTERVAL = 8 * 60 * 60 * 1000;
       const now = Date.now();
       const lastUpdate = parseInt(localStorage.getItem('last-quote-update') || '0');
       const savedQuote = localStorage.getItem('daily-quote-data');
@@ -125,41 +106,37 @@ const App: React.FC = () => {
         setDailyQuote(q);
         localStorage.setItem('daily-quote-data', JSON.stringify(q));
         localStorage.setItem('last-quote-update', now.toString());
-        
-        if (Notification.permission === 'granted') {
-          sendPushNotification(q);
-        }
       } else {
         setDailyQuote(JSON.parse(savedQuote));
       }
     } catch (err) {
       console.error("Falha ao rotacionar frase:", err);
-      // Fallback para uma frase de constante se falhar completamente
       setDailyQuote(INITIAL_QUOTES[0]);
     }
-  }, [sendPushNotification]);
+  }, []);
 
   useEffect(() => {
+    // Carregar favoritos e tema
     const savedFavs = localStorage.getItem('fav-quotes');
     if (savedFavs) setFavorites(JSON.parse(savedFavs));
     
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') setDarkMode(false);
     
-    if (typeof Notification !== 'undefined') {
-      setNotificationsEnabled(Notification.permission === 'granted');
-    }
-
+    // Inicialização robusta
     const initialize = async () => {
+      // Definir um timeout máximo de segurança para a splash screen
+      const timeoutPromise = new Promise(resolve => setTimeout(resolve, 3000));
+      
       try {
-        await rotateDailyQuote();
+        await Promise.race([rotateDailyQuote(), timeoutPromise]);
       } catch (e) {
         console.error("Erro na inicialização:", e);
       } finally {
-        // Garantir que a tela azul suma mesmo se houver erro
-        setTimeout(() => setIsInitializing(false), 2000);
+        setIsInitializing(false);
       }
     };
+    
     initialize();
 
     const interval = setInterval(rotateDailyQuote, 60000 * 5);
@@ -173,27 +150,11 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
     if (darkMode) {
-      document.body.classList.add('bg-slate-900', 'text-white');
-      document.body.classList.remove('bg-slate-50', 'text-slate-900');
+      document.body.style.backgroundColor = '#0f172a';
     } else {
-      document.body.classList.add('bg-slate-50', 'text-slate-900');
-      document.body.classList.remove('bg-slate-900', 'text-white');
+      document.body.style.backgroundColor = '#f8fafc';
     }
   }, [darkMode]);
-
-  const toggleNotifications = async () => {
-    if (notificationsEnabled) {
-      setNotificationsEnabled(false);
-    } else {
-      if (typeof Notification !== 'undefined') {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-          setNotificationsEnabled(true);
-          if (dailyQuote) sendPushNotification(dailyQuote);
-        }
-      }
-    }
-  };
 
   const toggleFavorite = (id: string) => {
     setFavorites(prev => 
@@ -277,7 +238,7 @@ const App: React.FC = () => {
         </div>
         <style>{`
           @keyframes progress { 0% { width: 0%; } 100% { width: 100%; } }
-          .animate-progress { animation: progress 2s ease-in-out forwards; }
+          .animate-progress { animation: progress 2.5s ease-in-out forwards; }
         `}</style>
       </div>
     );
@@ -314,7 +275,7 @@ const App: React.FC = () => {
               <div className="relative z-10 flex flex-col items-center sm:items-start gap-4 text-center sm:text-left">
                 <div className="space-y-3 max-w-2xl w-full">
                   <div className="inline-flex items-center gap-2 bg-white/15 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">
-                    <Sparkles size={14} className="text-indigo-200" /> Destaque de Hoje (A cada 8h)
+                    <Sparkles size={14} className="text-indigo-200" /> Destaque de Hoje
                   </div>
                   {dailyQuote ? (
                     <div className="space-y-2">
@@ -390,7 +351,7 @@ const App: React.FC = () => {
       <div className="space-y-4">
         <h2 className={`text-xs font-black uppercase tracking-[0.2em] px-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Preferências</h2>
         <div className={`rounded-[2rem] border overflow-hidden ${darkMode ? 'bg-slate-800/50 border-slate-700/50' : 'bg-white border-slate-100 shadow-sm'}`}>
-          <div className="p-6 flex items-center justify-between border-b dark:border-slate-700/50">
+          <div className="p-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 rounded-2xl">{darkMode ? <Moon size={22} /> : <Sun size={22} />}</div>
               <div>
@@ -402,18 +363,6 @@ const App: React.FC = () => {
               <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${darkMode ? 'left-7' : 'left-1'}`} />
             </button>
           </div>
-          <div className="p-6 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 rounded-2xl"><Bell size={22} /></div>
-              <div>
-                <p className="font-bold text-lg">Notificações</p>
-                <p className="text-sm text-slate-500">Receba destaque a cada 8h</p>
-              </div>
-            </div>
-            <button onClick={toggleNotifications} className={`w-14 h-8 rounded-full transition-all relative outline-none border-2 ${notificationsEnabled ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-200 border-slate-100'}`}>
-              <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${notificationsEnabled ? 'left-7' : 'left-1'}`} />
-            </button>
-          </div>
         </div>
         <h2 className={`text-xs font-black uppercase tracking-[0.2em] pt-4 px-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Aplicativo</h2>
         <div className={`rounded-[2rem] border overflow-hidden ${darkMode ? 'bg-slate-800/50 border-slate-700/50' : 'bg-white border-slate-100 shadow-sm'}`}>
@@ -423,10 +372,6 @@ const App: React.FC = () => {
           <SettingsItem icon={<Share2 size={20} />} label="Compartilhar App" onClick={handleShareApp} darkMode={darkMode} />
           <SettingsItem icon={<Mail size={20} />} label="Suporte & Feedback" onClick={() => window.location.href = 'mailto:suporte@inspireplus.com'} darkMode={darkMode} isLast />
         </div>
-      </div>
-      <div className="text-center py-4">
-        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Versão 1.1.0</p>
-        <p className="text-[10px] text-slate-500 mt-1">Desenvolvido com foco na sua evolução diária.</p>
       </div>
     </div>
   );
@@ -447,73 +392,26 @@ const App: React.FC = () => {
         <FeatureBox icon={<Award className="text-indigo-500" />} title="Excelência" content="Curadoria de alto nível e qualidade." darkMode={darkMode} />
         <FeatureBox icon={<Bookmark className="text-indigo-500" />} title="Coleção" content="Salve o que realmente te inspira." darkMode={darkMode} />
       </div>
-      <div className="text-center pt-8 border-t border-slate-700/50">
-        <p className="text-xs font-bold opacity-30 uppercase tracking-[0.3em]">© 2026 Inspire+ Digital Solutions. <br/> Versão 1.1.0</p>
-      </div>
-    </div>
-  );
-
-  const renderTerms = () => (
-    <div className="max-w-4xl mx-auto px-6 pt-10 pb-20 space-y-12 animate-in slide-in-from-right-4 safe-top">
-      <button onClick={() => setView('settings')} className="flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all">
-        <ChevronLeft size={20} /> Voltar para Ajustes
-      </button>
-      <div className="space-y-6">
-        <h1 className="text-5xl font-black tracking-tighter">Termos de Uso</h1>
-        <p className="text-sm font-black uppercase tracking-[0.2em] text-indigo-500">Versão 1.1 - Atualizado em Março de 2026</p>
-      </div>
-      <div className={`prose prose-slate dark:prose-invert max-w-none p-12 rounded-[3.5rem] border shadow-2xl ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-white border-slate-100'}`}>
-        <div className="space-y-10">
-          <section className="space-y-4">
-            <h3 className="text-2xl font-black flex items-center gap-3"><Scale size={24} className="text-indigo-500" /> 1. Licença de Uso</h3>
-            <p className="opacity-70 text-lg">Ao utilizar o Inspire+, você recebe uma licença pessoal apenas para fins de inspiração.</p>
-          </section>
-        </div>
-      </div>
-      <div className="text-center pt-8 border-t border-slate-700/50">
-        <p className="text-xs font-bold opacity-30 uppercase tracking-[0.3em]">© 2026 Inspire+ Digital Solutions. <br/> Versão 1.1.0</p>
-      </div>
-    </div>
-  );
-
-  const renderPrivacy = () => (
-    <div className="max-w-4xl mx-auto px-6 pt-10 pb-20 space-y-12 animate-in slide-in-from-right-4 safe-top">
-      <button onClick={() => setView('settings')} className="flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all">
-        <ChevronLeft size={20} /> Painel de Privacidade
-      </button>
-      <div className="space-y-6">
-        <h1 className="text-5xl font-black tracking-tighter">Sua Privacidade</h1>
-        <p className="text-sm font-black uppercase tracking-[0.2em] text-emerald-500 flex items-center gap-3"><ShieldCheck size={20} /> Em conformidade com a LGPD</p>
-      </div>
-      <div className={`p-12 rounded-[3.5rem] border space-y-16 shadow-2xl ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-white border-slate-100'}`}>
-        <div className="space-y-6">
-          <h3 className="text-3xl font-black flex items-center gap-4"><EyeOff className="text-emerald-500" /> Coleta Zero</h3>
-          <p className="opacity-70 leading-relaxed text-xl">O Inspire+ não solicita e-mail ou dados pessoais. Você é anônimo.</p>
-        </div>
-      </div>
-      <div className="text-center pt-8 border-t border-slate-700/50">
-        <p className="text-xs font-bold opacity-30 uppercase tracking-[0.3em]">© 2026 Inspire+ Digital Solutions. <br/> Versão 1.1.0</p>
-      </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen pb-28 md:pb-32 bg-slate-900 transition-colors duration-300">
+    <div className={`min-h-screen pb-28 md:pb-32 transition-colors duration-300 ${darkMode ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-900'}`}>
       <main className="safe-bottom">
         {view === 'home' && renderHome()}
         {view === 'category' && renderCategory()}
         {view === 'favorites' && (
           <div className="max-w-5xl mx-auto px-6 pt-10 space-y-8 animate-in slide-in-from-left-4 duration-500 safe-top">
-            <h1 className="text-3xl sm:text-4xl font-extrabold px-1 text-white">Sua Coleção</h1>
+            <h1 className="text-3xl sm:text-4xl font-extrabold px-1">Sua Coleção</h1>
             <SearchBar darkMode={darkMode} placeholder="Pesquisar nos favoritos..." value={searchQuery} onChange={setSearchQuery} onClear={() => setSearchQuery('')} />
             {filteredFavorites.length > 0 ? (
               <div className="grid gap-6">
                 {filteredFavorites.map(q => <QuoteCard key={q.id} quote={q} isFavorite={true} onToggleFavorite={toggleFavorite} darkMode={darkMode} />)}
               </div>
             ) : (
-              <div className="text-center py-32 bg-slate-800 rounded-[2.5rem] border border-slate-700 shadow-sm">
+              <div className={`text-center py-32 rounded-[2.5rem] border shadow-sm ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
                 <Heart size={48} className="mx-auto text-slate-500 mb-4" />
-                <p className="text-xl font-bold text-slate-300">Coleção vazia</p>
+                <p className={`text-xl font-bold ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>Coleção vazia</p>
                 <button onClick={handleGoHome} className="mt-4 px-8 py-3 bg-indigo-600 text-white rounded-2xl font-bold hover:scale-105 active:scale-95 transition-all">Descobrir frases</button>
               </div>
             )}
@@ -521,8 +419,20 @@ const App: React.FC = () => {
         )}
         {view === 'settings' && renderSettings()}
         {view === 'about' && renderAbout()}
-        {view === 'terms' && renderTerms()}
-        {view === 'privacy' && renderPrivacy()}
+        {view === 'terms' && (
+          <div className="max-w-4xl mx-auto px-6 pt-10 pb-20 space-y-12 animate-in safe-top">
+            <button onClick={() => setView('settings')} className="flex items-center gap-2 text-indigo-600 font-bold"><ChevronLeft size={20} /> Ajustes</button>
+            <h1 className="text-5xl font-black">Termos de Uso</h1>
+            <p className="opacity-70 text-lg">Ao utilizar o Inspire+, você recebe uma licença pessoal apenas para fins de inspiração.</p>
+          </div>
+        )}
+        {view === 'privacy' && (
+          <div className="max-w-4xl mx-auto px-6 pt-10 pb-20 space-y-12 animate-in safe-top">
+            <button onClick={() => setView('settings')} className="flex items-center gap-2 text-indigo-600 font-bold"><ChevronLeft size={20} /> Ajustes</button>
+            <h1 className="text-5xl font-black">Privacidade</h1>
+            <p className="opacity-70 text-lg">O Inspire+ não solicita e-mail ou dados pessoais. Seus favoritos ficam apenas no seu navegador.</p>
+          </div>
+        )}
       </main>
       
       <nav className={`fixed bottom-0 inset-x-0 z-50 border-t py-4 px-8 safe-bottom ${darkMode ? 'bg-slate-900/95 border-slate-800 backdrop-blur-2xl' : 'bg-white/95 border-slate-200 backdrop-blur-2xl'}`}>
