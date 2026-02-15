@@ -29,7 +29,6 @@
       * {
         -webkit-tap-highlight-color: transparent;
         -webkit-touch-callout: none;
-        user-select: none;
       }
 
       body {
@@ -39,6 +38,7 @@
         padding-top: env(safe-area-inset-top);
         padding-bottom: env(safe-area-inset-bottom);
         margin: 0;
+        user-select: none;
       }
 
       .font-quote { font-family: 'Libre Baskerville', serif; }
@@ -47,7 +47,7 @@
 
       .animated-border-wrapper {
         position: relative;
-        padding: 3px;
+        padding: 2px;
         overflow: hidden;
         border-radius: 1.5rem;
         display: flex;
@@ -58,10 +58,10 @@
         position: absolute;
         top: -50%; left: -50%;
         width: 200%; height: 200%;
-        animation: rotate 6s linear infinite;
+        animation: rotate 8s linear infinite;
         z-index: 0;
-        opacity: 0.1;
-        filter: blur(15px);
+        opacity: 0.15;
+        filter: blur(10px);
       }
 
       .anim-sucesso { background: conic-gradient(from 0deg, transparent, #fbbf24, #f59e0b, transparent); }
@@ -77,33 +77,31 @@
         position: relative;
         z-index: 10;
         width: 100%;
-        border-radius: calc(1.5rem - 3px);
+        border-radius: calc(1.5rem - 2px);
       }
 
-      .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(16px); }
-      .dark-glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(16px); }
+      .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); }
+      .dark-glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); }
 
       .safe-top { padding-top: env(safe-area-inset-top); }
       .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
     </style>
-    
-    <script type="importmap">
+  <script type="importmap">
 {
   "imports": {
+    "vite": "https://esm.sh/vite@^7.3.1",
     "react/": "https://esm.sh/react@^19.2.4/",
     "react": "https://esm.sh/react@^19.2.4",
-    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
-    "vite": "https://esm.sh/vite@^7.3.1",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
     "@vitejs/plugin-react-swc": "https://esm.sh/@vitejs/plugin-react-swc@^4.2.3"
   }
 }
 </script>
-  </head>
+</head>
   <body class="bg-slate-900 text-white transition-colors duration-300">
     <div id="root"></div>
-    <!-- No build do Vite, este caminho é automaticamente substituído pelo bundle JS -->
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
