@@ -1,0 +1,13 @@
+{
+  "name": "Inspire+ Motivação Profissional",
+  "short_name": "Inspire+",
+  "description": "Alcance seu potencial máximo com o Inspire+. Frases curadas, inteligência artificial avançada e design exclusivo para sua evolução diária.",
+  "version": "1.1.0",
+  "author": "Inspire+ Digital Solutions",
+  "category": "Lifestyle/Productivity",
+  "requestFramePermissions": [],
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#4f46e5",
+  "background_color": "#0f172a"
+}
