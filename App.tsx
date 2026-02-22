@@ -392,15 +392,40 @@ const App: React.FC = () => {
         <ChevronLeft size={20} /> Painel de Ajustes
       </button>
       <div className="space-y-6">
+        <div className="inline-flex items-center gap-2 bg-indigo-500/10 text-indigo-500 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">
+          <Cpu size={14} /> Inteligência Artificial Ativa
+        </div>
         <h1 className="text-5xl font-black tracking-tighter">Sobre o Inspire+</h1>
         <p className={`text-xl leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-          O Inspire+ é o seu companheiro diário projetado para potencializar o desenvolvimento pessoal e profissional.
+          O Inspire+ é uma plataforma de alta performance mental, unindo sabedoria clássica e inteligência artificial de ponta para impulsionar sua jornada pessoal e profissional.
         </p>
       </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <FeatureBox icon={<Target className="text-indigo-500" />} title="Propósito" content="Foco total nos seus objetivos de vida." darkMode={darkMode} />
-        <FeatureBox icon={<Award className="text-indigo-500" />} title="Excelência" content="Curadoria de alto nível e qualidade." darkMode={darkMode} />
-        <FeatureBox icon={<Bookmark className="text-indigo-500" />} title="Coleção" content="Salve o que realmente te inspira." darkMode={darkMode} />
+        <FeatureBox icon={<Cpu className="text-indigo-500" />} title="IA Generativa" content="Frases exclusivas geradas em tempo real pelo Google Gemini." darkMode={darkMode} />
+        <FeatureBox icon={<Target className="text-indigo-500" />} title="Foco Absoluto" content="Curadoria focada nos pilares do sucesso e da liderança." darkMode={darkMode} />
+        <FeatureBox icon={<ShieldCheck className="text-indigo-500" />} title="Privacidade" content="Seus dados nunca saem do seu dispositivo." darkMode={darkMode} />
+      </div>
+
+      <div className={`p-8 rounded-[2.5rem] border ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-white border-slate-100 shadow-sm'}`}>
+        <h3 className="text-2xl font-black mb-4">Nossa Missão</h3>
+        <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+          Acreditamos que uma única ideia, no momento certo, pode mudar o curso de uma vida. Nossa missão é fornecer a centelha necessária para que profissionais e visionários alcancem seu potencial máximo, um pensamento por vez.
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between pt-8 border-t border-slate-200 dark:border-slate-800">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-xl">I+</div>
+          <div>
+            <p className="font-bold">Inspire+ Digital</p>
+            <p className="text-xs opacity-50">Versão 1.1.2 • 2026</p>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <button className="p-2 opacity-50 hover:opacity-100 transition-opacity"><Mail size={20} /></button>
+          <button className="p-2 opacity-50 hover:opacity-100 transition-opacity"><Share2 size={20} /></button>
+        </div>
       </div>
     </div>
   );
@@ -430,17 +455,83 @@ const App: React.FC = () => {
         {view === 'settings' && renderSettings()}
         {view === 'about' && renderAbout()}
         {view === 'terms' && (
-          <div className="max-w-4xl mx-auto px-6 pt-10 pb-20 space-y-12 animate-in safe-top">
-            <button onClick={() => setView('settings')} className="flex items-center gap-2 text-indigo-600 font-bold"><ChevronLeft size={20} /> Ajustes</button>
-            <h1 className="text-5xl font-black">Termos de Uso</h1>
-            <p className="opacity-70 text-lg">Ao utilizar o Inspire+, você recebe uma licença pessoal apenas para fins de inspiração.</p>
+          <div className="max-w-4xl mx-auto px-6 pt-10 pb-20 space-y-12 animate-in slide-in-from-right-4 safe-top">
+            <button onClick={() => setView('settings')} className="flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all">
+              <ChevronLeft size={20} /> Ajustes
+            </button>
+            <div className="space-y-8">
+              <h1 className="text-5xl font-black tracking-tighter">Termos de Uso</h1>
+              
+              <div className="space-y-6">
+                <section className="space-y-3">
+                  <h2 className="text-xl font-bold">1. Aceitação dos Termos</h2>
+                  <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    Ao acessar e usar o Inspire+, você concorda em cumprir e estar vinculado a estes Termos de Uso. Se você não concordar com qualquer parte destes termos, não deverá utilizar o aplicativo.
+                  </p>
+                </section>
+
+                <section className="space-y-3">
+                  <h2 className="text-xl font-bold">2. Licença de Uso</h2>
+                  <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    Concedemos a você uma licença limitada, não exclusiva e intransferível para acessar e usar o Inspire+ para fins pessoais e não comerciais de inspiração e desenvolvimento pessoal.
+                  </p>
+                </section>
+
+                <section className="space-y-3">
+                  <h2 className="text-xl font-bold">3. Conteúdo Gerado por IA</h2>
+                  <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    O Inspire+ utiliza inteligência artificial (Google Gemini) para gerar conteúdos. Embora busquemos a máxima qualidade, não garantimos a precisão ou adequação de todas as frases geradas. O uso das informações é de sua inteira responsabilidade.
+                  </p>
+                </section>
+
+                <section className="space-y-3">
+                  <h2 className="text-xl font-bold">4. Isenção de Responsabilidade</h2>
+                  <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    O aplicativo é fornecido "como está". Não oferecemos garantias de que o serviço será ininterrupto ou livre de erros. O Inspire+ não substitui aconselhamento profissional médico, psicológico ou financeiro.
+                  </p>
+                </section>
+              </div>
+            </div>
           </div>
         )}
         {view === 'privacy' && (
-          <div className="max-w-4xl mx-auto px-6 pt-10 pb-20 space-y-12 animate-in safe-top">
-            <button onClick={() => setView('settings')} className="flex items-center gap-2 text-indigo-600 font-bold"><ChevronLeft size={20} /> Ajustes</button>
-            <h1 className="text-5xl font-black">Privacidade</h1>
-            <p className="opacity-70 text-lg">O Inspire+ não solicita e-mail ou dados pessoais. Seus favoritos ficam apenas no seu navegador.</p>
+          <div className="max-w-4xl mx-auto px-6 pt-10 pb-20 space-y-12 animate-in slide-in-from-right-4 safe-top">
+            <button onClick={() => setView('settings')} className="flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all">
+              <ChevronLeft size={20} /> Ajustes
+            </button>
+            <div className="space-y-8">
+              <h1 className="text-5xl font-black tracking-tighter">Privacidade</h1>
+              
+              <div className="space-y-6">
+                <section className="space-y-3">
+                  <h2 className="text-xl font-bold">Armazenamento Local</h2>
+                  <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    Sua privacidade é nossa prioridade absoluta. O Inspire+ utiliza o armazenamento local do seu navegador (LocalStorage) para salvar seus favoritos e preferências de tema. Esses dados nunca são enviados para nossos servidores.
+                  </p>
+                </section>
+
+                <section className="space-y-3">
+                  <h2 className="text-xl font-bold">Coleta de Dados</h2>
+                  <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    Não solicitamos e-mail, nome, telefone ou qualquer outra informação de identificação pessoal. O Inspire+ é um aplicativo anônimo por design.
+                  </p>
+                </section>
+
+                <section className="space-y-3">
+                  <h2 className="text-xl font-bold">Serviços de Terceiros</h2>
+                  <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    Para gerar novas frases, enviamos apenas o nome da categoria selecionada para a API do Google Gemini. Nenhum dado do seu dispositivo ou histórico de uso é compartilhado com terceiros.
+                  </p>
+                </section>
+
+                <section className="space-y-3">
+                  <h2 className="text-xl font-bold">Segurança</h2>
+                  <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    Como não coletamos dados em servidores externos, a segurança das suas frases favoritas depende da segurança do seu próprio dispositivo e navegador.
+                  </p>
+                </section>
+              </div>
+            </div>
           </div>
         )}
       </main>
