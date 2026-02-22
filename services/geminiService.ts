@@ -2,7 +2,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Quote } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export const fetchNewQuotes = async (categoryName: string): Promise<Quote[]> => {
   try {
@@ -25,7 +25,10 @@ export const fetchNewQuotes = async (categoryName: string): Promise<Quote[]> => 
       },
     });
 
-    const data = JSON.parse(response.text);
+    const text = response.text;
+    if (!text) return [];
+    
+    const data = JSON.parse(text);
     return data.map((item: any, index: number) => ({
       id: `ai-${Date.now()}-${index}`,
       text: item.text,
@@ -56,7 +59,10 @@ export const getDailyQuote = async (): Promise<Quote> => {
         },
       });
   
-      const data = JSON.parse(response.text);
+      const text = response.text;
+      if (!text) throw new Error("No text returned from Gemini");
+
+      const data = JSON.parse(text);
       return {
         id: `daily-${Date.now()}`,
         text: data.text,
