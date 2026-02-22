@@ -116,22 +116,30 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Carregar favoritos e tema
-    const savedFavs = localStorage.getItem('fav-quotes');
-    if (savedFavs) setFavorites(JSON.parse(savedFavs));
-    
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') setDarkMode(false);
-    
-    // Inicialização robusta
+    // Inicialização robusta com tratamento de erro
     const initialize = async () => {
-      // Definir um timeout máximo de segurança para a splash screen
-      const timeoutPromise = new Promise(resolve => setTimeout(resolve, 3000));
-      
       try {
-        await Promise.race([rotateDailyQuote(), timeoutPromise]);
+        // Carregar favoritos e tema com segurança
+        try {
+          const savedFavs = localStorage.getItem('fav-quotes');
+          if (savedFavs) setFavorites(JSON.parse(savedFavs));
+          
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme === 'light') setDarkMode(false);
+        } catch (storageErr) {
+          console.warn("Acesso ao localStorage negado ou corrompido:", storageErr);
+        }
+
+        // Definir um timeout máximo de segurança para a splash screen
+        const timeoutPromise = new Promise(resolve => setTimeout(resolve, 3500));
+        
+        // Tentar rotacionar a frase, mas não deixar travar a inicialização
+        await Promise.race([
+          rotateDailyQuote().catch(err => console.error("Erro ao carregar frase diária:", err)),
+          timeoutPromise
+        ]);
       } catch (e) {
-        console.error("Erro na inicialização:", e);
+        console.error("Erro crítico na inicialização:", e);
       } finally {
         setIsInitializing(false);
       }
@@ -139,7 +147,9 @@ const App: React.FC = () => {
     
     initialize();
 
-    const interval = setInterval(rotateDailyQuote, 60000 * 5);
+    const interval = setInterval(() => {
+      rotateDailyQuote().catch(err => console.error("Erro no intervalo de rotação:", err));
+    }, 60000 * 5);
     return () => clearInterval(interval);
   }, [rotateDailyQuote]);
 
