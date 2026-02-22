@@ -22,7 +22,9 @@ import {
   Scale,
   Lock,
   Cpu,
-  EyeOff
+  EyeOff,
+  Bell,
+  Star
 } from 'lucide-react';
 import { View, Category, Quote } from './types';
 import { CATEGORIES, INITIAL_QUOTES } from './constants';
@@ -91,6 +93,7 @@ const App: React.FC = () => {
   const [quotes] = useState<Quote[]>(INITIAL_QUOTES);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [darkMode, setDarkMode] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [dailyQuote, setDailyQuote] = useState<Quote | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -126,6 +129,9 @@ const App: React.FC = () => {
           
           const savedTheme = localStorage.getItem('theme');
           if (savedTheme === 'light') setDarkMode(false);
+
+          const savedNotifications = localStorage.getItem('notifications');
+          if (savedNotifications === 'true') setNotificationsEnabled(true);
         } catch (storageErr) {
           console.warn("Acesso ao localStorage negado ou corrompido:", storageErr);
         }
@@ -170,6 +176,25 @@ const App: React.FC = () => {
     setFavorites(prev => 
       prev.includes(id) ? prev.filter(fid => fid !== id) : [...prev, id]
     );
+  };
+
+  const toggleNotifications = async () => {
+    if (!notificationsEnabled) {
+      if ('Notification' in window) {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          setNotificationsEnabled(true);
+          localStorage.setItem('notifications', 'true');
+        } else {
+          alert('Para receber lembretes, você precisa permitir as notificações no seu navegador.');
+        }
+      } else {
+        alert('Seu navegador não suporta notificações.');
+      }
+    } else {
+      setNotificationsEnabled(false);
+      localStorage.setItem('notifications', 'false');
+    }
   };
 
   const handleCategorySelect = (cat: Category) => {
@@ -373,6 +398,33 @@ const App: React.FC = () => {
               <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${darkMode ? 'left-7' : 'left-1'}`} />
             </button>
           </div>
+          <div className={`p-6 flex items-center justify-between border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-100'}`}>
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 rounded-2xl"><Bell size={22} /></div>
+              <div>
+                <p className="font-bold text-lg">Lembretes Diários</p>
+                <p className="text-sm text-slate-500">Notificações de inspiração</p>
+              </div>
+            </div>
+            <button onClick={toggleNotifications} className={`w-14 h-8 rounded-full transition-all relative outline-none border-2 ${notificationsEnabled ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-200 border-slate-100'}`}>
+              <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${notificationsEnabled ? 'left-7' : 'left-1'}`} />
+            </button>
+          </div>
+          <div className={`p-6 flex items-center justify-between border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-100'}`}>
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 rounded-2xl"><Star size={22} /></div>
+              <div>
+                <p className="font-bold text-lg">Avaliar o App</p>
+                <p className="text-sm text-slate-500">Sua opinião é fundamental</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => alert('Obrigado! Sua avaliação nos ajuda a crescer. Em breve estaremos nas lojas oficiais.')}
+              className={`p-2.5 rounded-xl transition-all ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+            >
+              <ExternalLink size={20} />
+            </button>
+          </div>
         </div>
         <h2 className={`text-xs font-black uppercase tracking-[0.2em] pt-4 px-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Aplicativo</h2>
         <div className={`rounded-[2rem] border overflow-hidden ${darkMode ? 'bg-slate-800/50 border-slate-700/50' : 'bg-white border-slate-100 shadow-sm'}`}>
@@ -380,7 +432,7 @@ const App: React.FC = () => {
           <SettingsItem icon={<FileText size={20} />} label="Termos de Uso" onClick={() => setView('terms')} darkMode={darkMode} />
           <SettingsItem icon={<ShieldCheck size={20} />} label="Privacidade" onClick={() => setView('privacy')} darkMode={darkMode} />
           <SettingsItem icon={<Share2 size={20} />} label="Compartilhar App" onClick={handleShareApp} darkMode={darkMode} />
-          <SettingsItem icon={<Mail size={20} />} label="Suporte & Feedback" onClick={() => window.location.href = 'mailto:suporte@inspireplus.com'} darkMode={darkMode} isLast />
+          <SettingsItem icon={<Mail size={20} />} label="Suporte & Feedback" onClick={() => window.location.href = 'mailto:suporteinspireofc@gmail.com'} darkMode={darkMode} isLast />
         </div>
       </div>
     </div>
@@ -392,19 +444,16 @@ const App: React.FC = () => {
         <ChevronLeft size={20} /> Painel de Ajustes
       </button>
       <div className="space-y-6">
-        <div className="inline-flex items-center gap-2 bg-indigo-500/10 text-indigo-500 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">
-          <Cpu size={14} /> Inteligência Artificial Ativa
-        </div>
         <h1 className="text-5xl font-black tracking-tighter">Sobre o Inspire+</h1>
         <p className={`text-xl leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-          O Inspire+ é uma plataforma de alta performance mental, unindo sabedoria clássica e inteligência artificial de ponta para impulsionar sua jornada pessoal e profissional.
+          O Inspire+ é uma plataforma de alta performance mental, unindo sabedoria clássica e curadoria de elite para impulsionar sua jornada pessoal e profissional.
         </p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <FeatureBox icon={<Cpu className="text-indigo-500" />} title="IA Generativa" content="Frases exclusivas geradas em tempo real pelo Google Gemini." darkMode={darkMode} />
-        <FeatureBox icon={<Target className="text-indigo-500" />} title="Foco Absoluto" content="Curadoria focada nos pilares do sucesso e da liderança." darkMode={darkMode} />
-        <FeatureBox icon={<ShieldCheck className="text-indigo-500" />} title="Privacidade" content="Seus dados nunca saem do seu dispositivo." darkMode={darkMode} />
+        <FeatureBox icon={<Award className="text-indigo-500" />} title="Excelência" content="Curadoria de alto nível com foco em resultados reais." darkMode={darkMode} />
+        <FeatureBox icon={<Target className="text-indigo-500" />} title="Foco Absoluto" content="Conteúdo focado nos pilares do sucesso e da liderança." darkMode={darkMode} />
+        <FeatureBox icon={<ShieldCheck className="text-indigo-500" />} title="Privacidade" content="Seus dados e favoritos nunca saem do seu dispositivo." darkMode={darkMode} />
       </div>
 
       <div className={`p-8 rounded-[2.5rem] border ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-white border-slate-100 shadow-sm'}`}>
