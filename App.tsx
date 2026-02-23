@@ -136,11 +136,11 @@ const App: React.FC = () => {
           console.warn("Acesso ao localStorage negado ou corrompido:", storageErr);
         }
 
-        // Definir um timeout máximo de segurança para a splash screen
-        const timeoutPromise = new Promise(resolve => setTimeout(resolve, 3500));
+        // Definir um timeout de 10 segundos para a splash screen (conforme solicitado)
+        const timeoutPromise = new Promise(resolve => setTimeout(resolve, 10000));
         
-        // Tentar rotacionar a frase, mas não deixar travar a inicialização
-        await Promise.race([
+        // Garantir que a inicialização leve pelo menos 10 segundos (splash screen)
+        await Promise.all([
           rotateDailyQuote().catch(err => console.error("Erro ao carregar frase diária:", err)),
           timeoutPromise
         ]);
@@ -171,6 +171,46 @@ const App: React.FC = () => {
       document.body.style.backgroundColor = '#f8fafc';
     }
   }, [darkMode]);
+
+  useEffect(() => {
+    if (!notificationsEnabled) return;
+
+    const checkAndSendNotification = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const today = now.toDateString();
+
+      // Horários solicitados: 9h, 15h, 19h
+      const scheduledHours = [9, 15, 19];
+
+      if (scheduledHours.includes(hours) && minutes === 0) {
+        const lastSentKey = `last-notif-${hours}`;
+        const lastSentDate = localStorage.getItem(lastSentKey);
+
+        if (lastSentDate !== today) {
+          // Selecionar uma frase aleatória das iniciais
+          const randomQuote = INITIAL_QUOTES[Math.floor(Math.random() * INITIAL_QUOTES.length)];
+          
+          if ('Notification' in window && Notification.permission === 'granted') {
+            try {
+              new Notification("Inspire+ Lembrete", {
+                body: `"${randomQuote.text}" - ${randomQuote.author}`,
+                tag: `inspire-notif-${hours}`, // Evita duplicatas se disparar múltiplas vezes no mesmo minuto
+              });
+              localStorage.setItem(lastSentKey, today);
+            } catch (err) {
+              console.error("Erro ao disparar notificação:", err);
+            }
+          }
+        }
+      }
+    };
+
+    // Checar a cada minuto
+    const interval = setInterval(checkAndSendNotification, 60000);
+    return () => clearInterval(interval);
+  }, [notificationsEnabled]);
 
   const toggleFavorite = (id: string) => {
     setFavorites(prev => 
