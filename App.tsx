@@ -188,16 +188,45 @@ const App: React.FC = () => {
   };
 
   const handleShareApp = async () => {
+    const shareData = {
+      title: 'Inspire+ Motivação',
+      text: 'Alcance sua melhor versão com o Inspire+! Baixe agora.',
+      url: window.location.href,
+    };
+
+    // Tenta usar a Web Share API nativa
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: 'Inspire+ Motivação',
-          text: 'Alcance sua melhor versão com o Inspire+! Baixe agora.',
-          url: window.location.href,
-        });
+        await navigator.share(shareData);
+        return;
       } catch (err) {
-        console.log('Erro ao compartilhar', err);
+        // Se o erro não for cancelamento do usuário, tentamos o fallback
+        if ((err as Error).name !== 'AbortError') {
+          console.warn('Web Share API falhou, tentando fallback:', err);
+        } else {
+          return;
+        }
       }
+    }
+
+    // Fallback para WebView ou navegadores sem suporte: WhatsApp + Clipboard
+    const fullText = `${shareData.text} ${shareData.url}`;
+    
+    try {
+      // Tenta copiar para o clipboard como garantia
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(fullText);
+      }
+      
+      // Redireciona para o WhatsApp
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullText)}`;
+      window.open(whatsappUrl, '_blank');
+      
+      // Feedback para o usuário em ambientes WebView onde o redirecionamento pode ser sutil
+      alert('Link copiado! Abrindo WhatsApp para compartilhar...');
+    } catch (fallbackErr) {
+      console.error('Erro no fallback de compartilhamento:', fallbackErr);
+      alert('Não foi possível compartilhar automaticamente. Por favor, copie o link do navegador.');
     }
   };
 
