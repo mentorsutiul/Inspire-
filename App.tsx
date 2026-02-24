@@ -23,6 +23,7 @@ import {
   Lock,
   Cpu,
   EyeOff,
+  Bell,
   Star
 } from 'lucide-react';
 import { View, Category, Quote } from './types';
@@ -92,6 +93,7 @@ const App: React.FC = () => {
   const [quotes] = useState<Quote[]>(INITIAL_QUOTES);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [darkMode, setDarkMode] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [dailyQuote, setDailyQuote] = useState<Quote | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -141,6 +143,9 @@ const App: React.FC = () => {
           
           const savedTheme = localStorage.getItem('theme');
           if (savedTheme === 'light') setDarkMode(false);
+
+          const savedNotifications = localStorage.getItem('notifications');
+          if (savedNotifications === 'true') setNotificationsEnabled(true);
         } catch (storageErr) {
           console.warn("Acesso ao localStorage negado ou corrompido:", storageErr);
         }
@@ -181,10 +186,69 @@ const App: React.FC = () => {
     }
   }, [darkMode]);
 
+  useEffect(() => {
+    if (!notificationsEnabled) return;
+
+    const checkAndSendNotification = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const today = now.toDateString();
+
+      // Horários solicitados: 9h, 15h, 19h
+      const scheduledHours = [9, 15, 19];
+
+      if (scheduledHours.includes(hours) && minutes === 0) {
+        const lastSentKey = `last-notif-${hours}`;
+        const lastSentDate = localStorage.getItem(lastSentKey);
+
+        if (lastSentDate !== today) {
+          // Selecionar uma frase aleatória das iniciais
+          const randomQuote = INITIAL_QUOTES[Math.floor(Math.random() * INITIAL_QUOTES.length)];
+          
+          if ('Notification' in window && Notification.permission === 'granted') {
+            try {
+              new Notification("Inspire+ Lembrete", {
+                body: `"${randomQuote.text}" - ${randomQuote.author}`,
+                tag: `inspire-notif-${hours}`, // Evita duplicatas se disparar múltiplas vezes no mesmo minuto
+              });
+              localStorage.setItem(lastSentKey, today);
+            } catch (err) {
+              console.error("Erro ao disparar notificação:", err);
+            }
+          }
+        }
+      }
+    };
+
+    // Checar a cada minuto
+    const interval = setInterval(checkAndSendNotification, 60000);
+    return () => clearInterval(interval);
+  }, [notificationsEnabled]);
+
   const toggleFavorite = (id: string) => {
     setFavorites(prev => 
       prev.includes(id) ? prev.filter(fid => fid !== id) : [...prev, id]
     );
+  };
+
+  const toggleNotifications = async () => {
+    if (!notificationsEnabled) {
+      if ('Notification' in window) {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          setNotificationsEnabled(true);
+          localStorage.setItem('notifications', 'true');
+        } else {
+          alert('Para receber lembretes, você precisa permitir as notificações no seu navegador.');
+        }
+      } else {
+        alert('Seu navegador não suporta notificações.');
+      }
+    } else {
+      setNotificationsEnabled(false);
+      localStorage.setItem('notifications', 'false');
+    }
   };
 
   const handleCategorySelect = (cat: Category) => {
@@ -420,6 +484,18 @@ const App: React.FC = () => {
             </div>
             <button onClick={() => setDarkMode(!darkMode)} className={`w-14 h-8 rounded-full transition-all relative outline-none border-2 ${darkMode ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-200 border-slate-100'}`}>
               <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${darkMode ? 'left-7' : 'left-1'}`} />
+            </button>
+          </div>
+          <div className={`p-6 flex items-center justify-between border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-100'}`}>
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 rounded-2xl"><Bell size={22} /></div>
+              <div>
+                <p className="font-bold text-lg">Lembretes Diários</p>
+                <p className="text-sm text-slate-500">Notificações às 9h, 15h e 19h</p>
+              </div>
+            </div>
+            <button onClick={toggleNotifications} className={`w-14 h-8 rounded-full transition-all relative outline-none border-2 ${notificationsEnabled ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-200 border-slate-100'}`}>
+              <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${notificationsEnabled ? 'left-7' : 'left-1'}`} />
             </button>
           </div>
           <div className={`p-6 flex items-center justify-between border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-100'}`}>
