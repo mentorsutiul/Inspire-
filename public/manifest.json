@@ -3,12 +3,13 @@
   "name": "Inspire+ Motivação Profissional",
   "short_name": "Inspire+",
   "description": "Alcance seu potencial máximo com frases curadas e inteligência artificial.",
-  "start_url": "./index.html",
+  "id": "/?source=pwa",
+  "start_url": "/?source=pwa",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#4f46e5",
   "orientation": "portrait",
-  "scope": "./",
+  "scope": "/",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/2583/2583344.png",
@@ -29,7 +30,15 @@
       "src": "https://cdn-icons-png.flaticon.com/512/2583/2583344.png",
       "sizes": "512x512",
       "type": "image/png",
-      "label": "Homescreen do Inspire+"
+      "label": "Homescreen do Inspire+",
+      "form_factor": "wide"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2583/2583344.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "label": "Homescreen do Inspire+",
+      "form_factor": "narrow"
     }
   ]
 }

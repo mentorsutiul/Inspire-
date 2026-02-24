@@ -94,6 +94,20 @@ const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [dailyQuote, setDailyQuote] = useState<Quote | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   const rotateDailyQuote = useCallback(async (force = false) => {
     try {
@@ -242,6 +256,11 @@ const App: React.FC = () => {
 
   const GlobalHeader = () => (
     <header className={`sticky top-0 z-50 border-b px-6 py-5 mb-8 safe-top ${darkMode ? 'bg-slate-900/80 border-slate-800 backdrop-blur-xl' : 'bg-white/80 border-slate-100 backdrop-blur-xl'}`}>
+      {!isOnline && (
+        <div className="absolute top-0 left-0 right-0 bg-amber-500 text-white text-[10px] font-bold text-center py-1 animate-in slide-in-from-top duration-300">
+          MODO OFFLINE ATIVO
+        </div>
+      )}
       <div className="max-w-5xl mx-auto flex items-center justify-center relative min-h-[52px]">
         <div className="flex items-center cursor-pointer group" onClick={handleGoHome}>
           <span className={`font-black text-3xl sm:text-4xl md:text-5xl tracking-tighter transition-all duration-300 group-hover:opacity-80 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
