@@ -1,13 +1,14 @@
 {
   "id": "/",
-  "name": "Inspire",
-  "short_name": "Inspire",
+  "name": "Inspire+ Motivação Profissional",
+  "short_name": "Inspire+",
   "description": "Alcance seu potencial máximo com frases curadas e inteligência artificial.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#6C3CF0",
-  "theme_color": "#6C3CF0",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
   "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
@@ -21,21 +22,5 @@
       "type": "image/png",
       "purpose": "any"
     }
-  ],
-  "screenshots": [
-    {
-      "src": "/screenshots/desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Versão Desktop do Inspire"
-    },
-    {
-      "src": "/screenshots/mobile.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "label": "Versão Mobile do Inspire"
-    }
-  ],
-  "categories": ["lifestyle", "productivity"]
+  ]
 }

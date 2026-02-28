@@ -1,13 +1,11 @@
 
-const CACHE_NAME = 'inspire-plus-v2.3.0';
+const CACHE_NAME = 'inspire-plus-v2.4.0';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
-  '/screenshots/desktop.png',
-  '/screenshots/mobile.png',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap'
 ];
