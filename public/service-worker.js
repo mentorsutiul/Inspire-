@@ -1,9 +1,12 @@
 
-const CACHE_NAME = 'inspire-plus-v2.4.0';
+const CACHE_NAME = 'inspire-plus-v2.5.0';
+const offlineFallbackPage = "offline.html";
+
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/offline.html',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
   'https://cdn.tailwindcss.com',
@@ -14,7 +17,7 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('Caching shell assets');
+      console.log('Caching shell assets and offline page');
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
@@ -45,6 +48,19 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          return cache.match(event.request).then((response) => {
+            return response || cache.match(offlineFallbackPage);
+          });
+        });
+      })
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -69,11 +85,6 @@ self.addEventListener('fetch', (event) => {
         });
 
         return response;
-      }).catch(() => {
-        // Fallback for navigation requests when offline
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
       });
     })
   );
