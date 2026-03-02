@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'inspire-plus-v2.9.0';
+const CACHE_NAME = 'inspire-plus-v3.1.0';
 const offlineFallbackPage = "offline.html";
 
 const ASSETS_TO_CACHE = [
