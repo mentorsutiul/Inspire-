@@ -1,12 +1,12 @@
 {
   "id": "/",
   "name": "Inspire+ Motivação Profissional",
-  "short_name": "Inspire+",
+  "short_name": "Inspire+ motivação",
   "description": "Alcance seu potencial máximo com frases curadas e inteligência artificial.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#4f46e5",
+  "background_color": "#fefeff",
+  "theme_color": "#a9a9a9",
   "orientation": "portrait",
   "scope": "/",
   "icons": [
