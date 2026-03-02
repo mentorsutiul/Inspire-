@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'inspire-plus-v2.6.0';
+const CACHE_NAME = 'inspire-plus-v2.7.0';
 const offlineFallbackPage = "offline.html";
 
 const ASSETS_TO_CACHE = [
@@ -7,8 +7,8 @@ const ASSETS_TO_CACHE = [
   '/index.html',
   '/manifest.json',
   '/offline.html',
-  '/icons/icon-192x192.png.png',
-  '/icons/icon-512x512.png.png',
+  '/icons/icon-192x192.png',
+  '/icons/icon-512x512.png',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap'
 ];
