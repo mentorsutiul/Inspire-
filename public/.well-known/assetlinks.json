@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.vercel.inspire_31su.twa",
+      "sha256_cert_fingerprints": [
+        "8E:A4:2B:FE:57:33:DE:43:0E:5F:97:B9:D0:F7:46:E6:89:1F:F0:47:D1:D8:E8:E4:B3:BD:F6:11:0B:C2:2C:8A"
+      ]
+    }
+  }
+]
