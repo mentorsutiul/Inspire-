@@ -14,15 +14,9 @@ import {
   FileText,
   Share2,
   Mail,
-  ExternalLink,
   Zap,
   Target,
   Award,
-  Bookmark,
-  Scale,
-  Lock,
-  Cpu,
-  EyeOff,
   Bell,
   Star
 } from 'lucide-react';
@@ -66,7 +60,6 @@ const SettingsItem = ({ icon, label, onClick, darkMode, isLast }: any) => (
       </div>
       <p className="font-bold text-slate-700 dark:text-slate-200">{label}</p>
     </div>
-    <ExternalLink size={16} className="text-slate-400 opacity-50" />
   </button>
 );
 
@@ -394,11 +387,12 @@ const App: React.FC = () => {
                 ))}
               </div>
             </section>
+            
             <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 p-5 sm:p-6 text-white shadow-lg">
               <div className="relative z-10 flex flex-col items-center sm:items-start gap-4 text-center sm:text-left">
                 <div className="space-y-3 max-w-2xl w-full">
                   <div className="inline-flex items-center gap-2 bg-white/15 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">
-                    <Sparkles size={14} className="text-indigo-200" /> Destaque de Hoje
+                    <Zap size={14} className="text-indigo-200" /> Destaque de Hoje
                   </div>
                   {dailyQuote ? (
                     <div className="space-y-2">
@@ -510,7 +504,7 @@ const App: React.FC = () => {
               onClick={() => alert('Obrigado! Sua avaliação nos ajuda a crescer. Em breve estaremos nas lojas oficiais.')}
               className={`p-2.5 rounded-xl transition-all ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
             >
-              <ExternalLink size={20} />
+              <Star size={20} />
             </button>
           </div>
         </div>
@@ -556,7 +550,7 @@ const App: React.FC = () => {
           <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-xl">I+</div>
           <div>
             <p className="font-bold">Inspire+ Digital</p>
-            <p className="text-xs opacity-50">Versão 1.1.2 • 2026</p>
+            <p className="text-xs opacity-50">Versão 1.3.1 (Fix ReferenceError) • 2026</p>
           </div>
         </div>
         <div className="flex gap-4">

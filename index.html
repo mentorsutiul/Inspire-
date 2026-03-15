@@ -106,6 +106,22 @@
 </head>
   <body class="bg-slate-900 text-white transition-colors duration-300">
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script>
+      // Force unregister all service workers to kill persistent ads cache
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+      // Clear all caches
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          for (let name of names) caches.delete(name);
+        });
+      }
+    </script>
+    <script type="module" src="/index.tsx?v=11.0.0"></script>
   </body>
 </html>
