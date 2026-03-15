@@ -550,7 +550,7 @@ const App: React.FC = () => {
           <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-xl">I+</div>
           <div>
             <p className="font-bold">Inspire+ Digital</p>
-            <p className="text-xs opacity-50">Versão 1.3.1 (Fix ReferenceError) • 2026</p>
+            <p className="text-xs opacity-50">Versão 1.3.2 (Fix Build Error) • 2026</p>
           </div>
         </div>
         <div className="flex gap-4">
