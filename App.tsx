@@ -98,6 +98,14 @@ const App: React.FC = () => {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
+    // Handle initial route based on URL path
+    const path = window.location.pathname;
+    if (path === '/privacy') {
+      setView('privacy');
+    } else if (path === '/terms') {
+      setView('terms');
+    }
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -414,6 +422,15 @@ const App: React.FC = () => {
                 </div>
               </div>
             </section>
+            
+            <footer className="py-12 flex flex-col items-center gap-4 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex gap-6 text-xs font-bold uppercase tracking-widest opacity-40">
+                <button onClick={() => setView('privacy')} className="hover:opacity-100 transition-opacity">Privacidade</button>
+                <button onClick={() => setView('terms')} className="hover:opacity-100 transition-opacity">Termos</button>
+                <button onClick={() => setView('about')} className="hover:opacity-100 transition-opacity">Sobre</button>
+              </div>
+              <p className="text-[10px] opacity-30 font-medium">© 2026 Inspire+ Digital • Todos os direitos reservados</p>
+            </footer>
           </>
         ) : (
           <section className="space-y-6">
@@ -550,7 +567,7 @@ const App: React.FC = () => {
           <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-xl">I+</div>
           <div>
             <p className="font-bold">Inspire+ Digital</p>
-            <p className="text-xs opacity-50">Versão 1.3.2 (Fix Build Error) • 2026</p>
+            <p className="text-xs opacity-50">Versão 1.3.1 (Fix ReferenceError) • 2026</p>
           </div>
         </div>
         <div className="flex gap-4">
@@ -621,6 +638,18 @@ const App: React.FC = () => {
                     O aplicativo é fornecido "como está". Não oferecemos garantias de que o serviço será ininterrupto ou livre de erros. O Inspire+ não substitui aconselhamento profissional médico, psicológico ou financeiro.
                   </p>
                 </section>
+
+                <section className="pt-12 border-t border-slate-200 dark:border-slate-800">
+                  <p className="text-[10px] uppercase tracking-widest font-black text-indigo-500 mb-2">Link Oficial de Publicação:</p>
+                  <a 
+                    href="https://ais-dev-ndq3z2cyatehai7j7zpt4c-127353323617.us-east1.run.app/terms/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm font-mono break-all text-indigo-600 dark:text-indigo-400 underline decoration-indigo-500/30 underline-offset-4 hover:decoration-indigo-500 transition-all"
+                  >
+                    https://ais-dev-ndq3z2cyatehai7j7zpt4c-127353323617.us-east1.run.app/terms/
+                  </a>
+                </section>
               </div>
             </div>
           </div>
@@ -660,6 +689,18 @@ const App: React.FC = () => {
                   <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                     Como não coletamos dados em servidores externos, a segurança das suas frases favoritas depende da segurança do seu próprio dispositivo e navegador.
                   </p>
+                </section>
+
+                <section className="pt-12 border-t border-slate-200 dark:border-slate-800">
+                  <p className="text-[10px] uppercase tracking-widest font-black text-indigo-500 mb-2">Link Oficial de Publicação:</p>
+                  <a 
+                    href="https://ais-dev-ndq3z2cyatehai7j7zpt4c-127353323617.us-east1.run.app/privacy/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm font-mono break-all text-indigo-600 dark:text-indigo-400 underline decoration-indigo-500/30 underline-offset-4 hover:decoration-indigo-500 transition-all"
+                  >
+                    https://ais-dev-ndq3z2cyatehai7j7zpt4c-127353323617.us-east1.run.app/privacy/
+                  </a>
                 </section>
               </div>
             </div>
