@@ -425,8 +425,8 @@ const App: React.FC = () => {
             
             <footer className="py-12 flex flex-col items-center gap-4 border-t border-slate-100 dark:border-slate-800">
               <div className="flex gap-6 text-xs font-bold uppercase tracking-widest opacity-40">
-                <button onClick={() => setView('privacy')} className="hover:opacity-100 transition-opacity">Privacidade</button>
-                <button onClick={() => setView('terms')} className="hover:opacity-100 transition-opacity">Termos</button>
+                <button onClick={() => window.open('/privacy/', '_blank')} className="hover:opacity-100 transition-opacity">Privacidade</button>
+                <button onClick={() => window.open('/terms/', '_blank')} className="hover:opacity-100 transition-opacity">Termos</button>
                 <button onClick={() => setView('about')} className="hover:opacity-100 transition-opacity">Sobre</button>
               </div>
               <p className="text-[10px] opacity-30 font-medium">© 2026 Inspire+ Digital • Todos os direitos reservados</p>
@@ -525,11 +525,30 @@ const App: React.FC = () => {
             </button>
           </div>
         </div>
+        <h2 className={`text-xs font-black uppercase tracking-[0.2em] pt-4 px-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Links de Publicação (Lojas)</h2>
+        <div className={`p-6 rounded-[2rem] border space-y-4 ${darkMode ? 'bg-slate-800/50 border-slate-700/50' : 'bg-white border-slate-100 shadow-sm'}`}>
+          <div className="space-y-2">
+            <p className="text-[10px] font-black uppercase tracking-widest opacity-50">URL de Privacidade:</p>
+            <div className="flex items-center gap-2">
+              <input readOnly value="https://ais-dev-ndq3z2cyatehai7j7zpt4c-127353323617.us-east1.run.app/privacy/" className={`flex-1 text-xs font-mono p-3 rounded-xl border ${darkMode ? 'bg-slate-900 border-slate-700 text-indigo-400' : 'bg-slate-50 border-slate-200 text-indigo-600'}`} />
+              <button onClick={() => window.open('/privacy/', '_blank')} className="p-3 bg-indigo-600 text-white rounded-xl hover:scale-105 transition-all"><Share2 size={16} /></button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <p className="text-[10px] font-black uppercase tracking-widest opacity-50">URL de Termos:</p>
+            <div className="flex items-center gap-2">
+              <input readOnly value="https://ais-dev-ndq3z2cyatehai7j7zpt4c-127353323617.us-east1.run.app/terms/" className={`flex-1 text-xs font-mono p-3 rounded-xl border ${darkMode ? 'bg-slate-900 border-slate-700 text-indigo-400' : 'bg-slate-50 border-slate-200 text-indigo-600'}`} />
+              <button onClick={() => window.open('/terms/', '_blank')} className="p-3 bg-indigo-600 text-white rounded-xl hover:scale-105 transition-all"><Share2 size={16} /></button>
+            </div>
+          </div>
+          <p className="text-[10px] opacity-40 italic">Use estes links para preencher os campos obrigatórios na App Store ou Google Play.</p>
+        </div>
+
         <h2 className={`text-xs font-black uppercase tracking-[0.2em] pt-4 px-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Aplicativo</h2>
         <div className={`rounded-[2rem] border overflow-hidden ${darkMode ? 'bg-slate-800/50 border-slate-700/50' : 'bg-white border-slate-100 shadow-sm'}`}>
           <SettingsItem icon={<Info size={20} />} label="Sobre o Inspire+" onClick={() => setView('about')} darkMode={darkMode} />
-          <SettingsItem icon={<FileText size={20} />} label="Termos de Uso" onClick={() => setView('terms')} darkMode={darkMode} />
-          <SettingsItem icon={<ShieldCheck size={20} />} label="Privacidade" onClick={() => setView('privacy')} darkMode={darkMode} />
+          <SettingsItem icon={<FileText size={20} />} label="Termos de Uso (Abrir Site)" onClick={() => window.open('/terms/', '_blank')} darkMode={darkMode} />
+          <SettingsItem icon={<ShieldCheck size={20} />} label="Privacidade (Abrir Site)" onClick={() => window.open('/privacy/', '_blank')} darkMode={darkMode} />
           <SettingsItem icon={<Share2 size={20} />} label="Compartilhar App" onClick={handleShareApp} darkMode={darkMode} />
           <SettingsItem icon={<Mail size={20} />} label="Suporte & Feedback" onClick={() => window.location.href = 'mailto:suporteinspireofc@gmail.com'} darkMode={darkMode} isLast />
         </div>
