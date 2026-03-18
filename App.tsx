@@ -525,25 +525,6 @@ const App: React.FC = () => {
             </button>
           </div>
         </div>
-        <h2 className={`text-xs font-black uppercase tracking-[0.2em] pt-4 px-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Links de Publicação (Lojas)</h2>
-        <div className={`p-6 rounded-[2rem] border space-y-4 ${darkMode ? 'bg-slate-800/50 border-slate-700/50' : 'bg-white border-slate-100 shadow-sm'}`}>
-          <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-widest opacity-50">URL de Privacidade:</p>
-            <div className="flex items-center gap-2">
-              <input readOnly value="https://ais-dev-ndq3z2cyatehai7j7zpt4c-127353323617.us-east1.run.app/privacy/" className={`flex-1 text-xs font-mono p-3 rounded-xl border ${darkMode ? 'bg-slate-900 border-slate-700 text-indigo-400' : 'bg-slate-50 border-slate-200 text-indigo-600'}`} />
-              <button onClick={() => window.open('/privacy/', '_blank')} className="p-3 bg-indigo-600 text-white rounded-xl hover:scale-105 transition-all"><Share2 size={16} /></button>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-widest opacity-50">URL de Termos:</p>
-            <div className="flex items-center gap-2">
-              <input readOnly value="https://ais-dev-ndq3z2cyatehai7j7zpt4c-127353323617.us-east1.run.app/terms/" className={`flex-1 text-xs font-mono p-3 rounded-xl border ${darkMode ? 'bg-slate-900 border-slate-700 text-indigo-400' : 'bg-slate-50 border-slate-200 text-indigo-600'}`} />
-              <button onClick={() => window.open('/terms/', '_blank')} className="p-3 bg-indigo-600 text-white rounded-xl hover:scale-105 transition-all"><Share2 size={16} /></button>
-            </div>
-          </div>
-          <p className="text-[10px] opacity-40 italic">Use estes links para preencher os campos obrigatórios na App Store ou Google Play.</p>
-        </div>
-
         <h2 className={`text-xs font-black uppercase tracking-[0.2em] pt-4 px-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Aplicativo</h2>
         <div className={`rounded-[2rem] border overflow-hidden ${darkMode ? 'bg-slate-800/50 border-slate-700/50' : 'bg-white border-slate-100 shadow-sm'}`}>
           <SettingsItem icon={<Info size={20} />} label="Sobre o Inspire+" onClick={() => setView('about')} darkMode={darkMode} />
